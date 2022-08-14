@@ -17,7 +17,10 @@ namespace Assets.Scripts.Additions
         [SerializeField]
         private float _currentHealth;
         [SerializeField]
-        private bool canHealAuto = true;
+        private bool _canHealAuto = true;
+        [SerializeField]
+        private int _delayedRegeneration;
+
 
         [Header("Events")]
         public UnityEvent OnDamageTaked;
@@ -27,8 +30,10 @@ namespace Assets.Scripts.Additions
         public float MaxHealth { get => _maxHealth; private set => _maxHealth = value; }
         public float HealingRatePerSecond { get => _healingRatePerSecond; private set => _healingRatePerSecond = value; }
         public float CurrentHealth { get => _currentHealth; private set => _currentHealth = value; }
-        public bool CanHealAuto { get => canHealAuto; private set => canHealAuto = value; }
+        public bool CanHealAuto { get => _canHealAuto; private set => _canHealAuto = value; }
 
+        private int _delay;
+        
         private void Awake()
         {
             _currentHealth = _maxHealth;
@@ -36,6 +41,8 @@ namespace Assets.Scripts.Additions
 
         private void OnEnable()
         {
+            OnDamageTaked.AddListener(() => ResetDelay());
+            OnDamageTaked.AddListener(() => StartCoroutine(nameof(Delay)));
             OnDamageTaked.AddListener(() => StartCoroutine(nameof(AutoHeal)));
         }
 
@@ -72,10 +79,33 @@ namespace Assets.Scripts.Additions
                 OnDead?.Invoke();
         }
 
+        private void ResetDelay()
+        {
+            _delay = 0;
+        }
+
+        private IEnumerator Delay()
+        {
+            if (_currentHealth == _maxHealth)
+            {
+                _delay = 0;
+                yield return null;
+
+            }
+
+            for (int i = 1; i <= _delayedRegeneration; i++)
+            { 
+                _delay = i;
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
         private IEnumerator AutoHeal()
         {
 
-            while (_currentHealth < _maxHealth && canHealAuto)
+            yield return new WaitForSeconds(_delayedRegeneration);
+
+            while ((_currentHealth < _maxHealth) && _canHealAuto && (_delay == _delayedRegeneration))
             {
                 Heal(_healingRatePerSecond);
                 yield return new WaitForSeconds(1f);
