@@ -5,7 +5,7 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts.Additions
 {
-    public class Health : MonoBehaviour
+    public sealed class Health : MonoBehaviour
     {
         private const float minHealth = 0;
 

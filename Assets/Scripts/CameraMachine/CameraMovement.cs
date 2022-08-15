@@ -1,32 +1,35 @@
 using System;
 using UnityEngine;
 
-public sealed class CameraMovement : MonoBehaviour
+namespace Assets.Scripts.CameraMachine
 {
-    [Header("Main")]
-    [SerializeField]
-    private Transform _observer;
-    [SerializeField]
-    private Transform _slave;
-    [SerializeField]
-    private Vector3 _offset;
-
-    private void OnEnable()
+    public sealed class CameraMovement : MonoBehaviour
     {
-        if (_observer == null)
-            throw new Exception("No observer found!");
+        [Header("Main")]
+        [SerializeField]
+        private Transform _observer;
+        [SerializeField]
+        private Transform _slave;
+        [SerializeField]
+        private Vector3 _offset;
 
-        if (_slave == null)
-            throw new Exception("Slave not found!");
-    }
+        private void OnEnable()
+        {
+            if (_observer == null)
+                throw new Exception("No observer found!");
 
-    private void Update()
-    {
-        MoveCameraBehindSlave();   
-    }
+            if (_slave == null)
+                throw new Exception("Slave not found!");
+        }
 
-    private void MoveCameraBehindSlave()
-    {
-        _observer.position = _slave.position + _offset + new Vector3(0, 0, _observer.position.z);
+        private void Update()
+        {
+            MoveCameraBehindSlave();
+        }
+
+        private void MoveCameraBehindSlave()
+        {
+            _observer.position = _slave.position + _offset + new Vector3(0, 0, _observer.position.z);
+        }
     }
 }

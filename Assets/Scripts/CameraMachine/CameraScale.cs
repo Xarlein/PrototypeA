@@ -1,20 +1,32 @@
 using UnityEngine;
 
-public sealed class CameraScale : MonoBehaviour
+namespace Assets.Scripts.CameraMachine
 {
-    [Header("Main")]
-    [SerializeField]
-    private Camera _observer;
-    [SerializeField]
-    private int _steps;
-    [SerializeField]
-    private float _stepScale;
-
-
-    private void LateUpdate()
+    [RequireComponent(typeof(Camera))]
+    public sealed class CameraScale : MonoBehaviour
     {
-        float scrollDirection = Input.GetAxis("Mouse ScrollWheel");
+        [Header("Main")]
+        [SerializeField]
+        private Camera _observer;
+        [SerializeField]
+        private int _steps;
+        [SerializeField]
+        private float _stepScale;
 
-        _observer.orthographicSize = Mathf.Clamp(_observer.orthographicSize + (scrollDirection * _stepScale), 5, _steps * _stepScale);
+        private float _originSize;
+
+        private void Awake()
+        {
+            _originSize = _observer.orthographicSize;
+        }
+
+        private void LateUpdate()
+        {
+            float scrollDirection = Input.GetAxis("Mouse ScrollWheel");
+
+            _observer.orthographicSize = Mathf.Clamp(_observer.orthographicSize + (scrollDirection * _stepScale), _originSize, _steps * _stepScale);
+        }
     }
+
 }
+
